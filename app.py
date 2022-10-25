@@ -1,4 +1,6 @@
-from flask import Flask, render_template, jsonify, request, make_response
+from datetime import datetime
+
+from flask import Flask, render_template, request, redirect, make_response, jsonify
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -7,10 +9,87 @@ client = MongoClient('localhost', 27017)
 db = client.krafton09
 
 
-# HTML 화면 보여주기
+# GET 메인 페이지
+@app.route('/<filter>')
 @app.route('/')
-def home():
-    return render_template('index.html')
+def main(filter=None):
+    if filter:
+        print('필터온')
+    else:
+        print('필터x')
+
+    all_posts = list(db.posts.find({}))
+    return render_template('main.html', all_posts=all_posts)
+
+
+# GET 글 생성 페이지로
+
+
+@app.route('/post')
+def post_form():
+    return render_template('post_form.html', post=None)
+
+
+# POST 글 생성
+@app.route('/post', methods=['POST'])
+def create_post():
+    post_collection = db.posts
+
+    user_email = request.cookies.get('user_email')
+    user_name = request.cookies.get('user_name')
+
+    post_title = request.form['post_title']
+    post_dtl = request.form['post_dtl']
+    reg_time = datetime.now()
+
+    idx_list = list(db.posts.find({}, {'_id': False}).sort('idx', -1).limit(1))
+
+    if len(idx_list) == 0:
+        idx = 1
+    else:
+        idx = idx_list[0]['idx'] + 1
+
+    doc = {
+        'idx': idx,
+        'writer_name': user_name,
+        'writer_email': user_email,
+        'title': post_title,
+        'description': post_dtl,
+        'participants': 0,
+        'reg_time': reg_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'status': '모집중'
+    }
+    post_collection.insert_one(doc)
+    return redirect('/')
+
+
+# GET 글 상세보기 페이지로
+@app.route('/post/<idx>')
+def post_dtl(idx=None):
+    post_collection = db.posts
+    return render_template('post_dtl.html', post=post_collection.find_one({'idx': int(idx)}))
+
+
+# 글 수정
+@app.route('/edit/<idx>')
+def post_edit(idx=None):
+    post_collection = db.posts
+    return render_template('post_form.html', post=post_collection.find_one({'idx': int(idx)}))
+
+
+# 글 수정
+@app.route('/edit/<idx>', methods=['POST'])
+def post_update(idx=None):
+    db.posts.update_many({'idx': int(idx)},
+                         {'$set': {'title': request.form['edited_title'], 'description': request.form['edited_dtl']}})
+    return jsonify({'result': 'success'})
+
+
+# 글 삭제
+@app.route('/delete/<idx>')
+def post_delete(idx=None):
+    db.posts.delete_one({'idx': int(idx)})
+    return redirect('/')
 
 
 @app.route('/login')
