@@ -132,7 +132,7 @@
     </div>
 
     <script>
-        setCookie("account", "as1234/형기", 1)
+        setCookie("account", "aaa@naver.com/길동", 1)
         let myAccount = getCookie("account")
 
         function closePurchase(idx) {
@@ -146,7 +146,7 @@
 
             $.ajax({
                 type: "POST", // POST 방식으로 요청하겠다.
-                url: "/api/closepurchase", // /memo라는 url에 요청하겠다.
+                url: "/api/closePurchase",
                 data: {account_give: myAccount, idx_give: idx}, // 데이터를 주는 방법
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
