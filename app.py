@@ -28,7 +28,7 @@ def mypage_page():
 
 
 # API 역할을 하는 부분
-@app.route('/api/signup', methods=['POST'])
+@app.route('/api/signUp', methods=['POST'])
 def signup_post():
     email_receive = request.form['email_give']
     pw_receive = request.form['pw_give']
@@ -40,6 +40,46 @@ def signup_post():
     db.users.insert_one(user)
 
     return jsonify({'result': 'success', 'comment': "회원가입이 완료되었습니다."})
+
+
+@app.route('/api/addData', methods=['POST'])
+def add_data():
+    tempdata = {
+        "idx": 1,
+        "writer_email": "aaa@naver.com",
+        "writer_name": "길동",
+        "title": "제목",
+        "description": "내용",
+        "participants": [("bbb@naver.com", "동길")],
+        "reg_time": "22-10-15",
+        "status": "모집중"
+    }
+
+    # 3. mongoDB에 데이터를 넣기
+    db.posts.insert_one(tempdata)
+
+    return jsonify({'result': 'success', 'comment': "data 추가가 완료되었습니다."})
+
+
+@app.route('/api/closePurchase', methods=['POST'])
+def closepurchase_post():
+    account_receive = request.form['account_give']
+    idx_receive = request.form['idx_give']
+
+    finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
+    if finded_post is None:
+        return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
+
+    account_email = account_receive.split("/")[0]
+    account_name = account_receive.split("/")[1]
+
+    if finded_post["writer_email"] != account_email or finded_post["writer_name"] != account_name:
+        return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
+
+    # 3. mongoDB에 데이터를 넣기
+    db.users.update_one({'idx': idx_receive}, {'$set': {'status ': "마감"}})
+
+    return jsonify({'result': 'success', 'comment': "정상적으로 처리되었습니다."})
 
 
 if __name__ == '__main__':
