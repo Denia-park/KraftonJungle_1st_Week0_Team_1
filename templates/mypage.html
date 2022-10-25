@@ -129,6 +129,10 @@
             </tbody>
         </table>
 
+        <button onclick="joinPurchase(1)">
+            마감
+        </button>
+
     </div>
 
     <script>
@@ -136,8 +140,6 @@
         let myAccount = getCookie("account")
 
         function closePurchase(idx) {
-            let index = Number(idx);
-
             //쿠키를 가져와서 쿠키에 저장된 데이터를 보냄
             let myAccount = getCookie("account")
             //서버에서 쿠키의 데이터와 idx 의 작성자 정보를 비교해서 옳은 유저이면
@@ -147,6 +149,31 @@
             $.ajax({
                 type: "POST", // POST 방식으로 요청하겠다.
                 url: "/api/closePurchase",
+                data: {account_give: myAccount, idx_give: idx}, // 데이터를 주는 방법
+                success: function (response) { // 성공하면
+                    if (response["result"] == "success") {
+                        alert(response["comment"]);
+                        // 3. 성공 시 페이지 새로고침하기
+                        window.location.reload();
+                    } else if (response["result"] == "error") {
+                        alert(response["comment"]);
+                    } else {
+                        alert("서버 오류!")
+                    }
+                }
+            })
+        }
+
+        function joinPurchase(idx) {
+            //쿠키를 가져와서 쿠키에 저장된 데이터를 보냄
+            let myAccount = getCookie("account")
+            //서버에서 쿠키의 데이터와 idx 의 작성자 정보를 비교해서 옳은 유저이면
+            //마감기능을 수행 후 success 를 return
+            //아니면 실패를 return
+
+            $.ajax({
+                type: "POST", // POST 방식으로 요청하겠다.
+                url: "/api/joinPurchase",
                 data: {account_give: myAccount, idx_give: idx}, // 데이터를 주는 방법
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {

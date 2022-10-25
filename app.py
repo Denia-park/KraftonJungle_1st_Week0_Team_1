@@ -63,6 +63,7 @@ def add_data():
 
 @app.route('/api/closePurchase', methods=['POST'])
 def closepurchase_post():
+    # request.cookies.get("")
     account_receive = request.form['account_give']
     idx_receive = int(request.form['idx_give'])
 
@@ -78,6 +79,27 @@ def closepurchase_post():
 
     # 3. mongoDB에 데이터를 넣기
     db.posts.update_one({'idx': idx_receive}, {'$set': {'status': "마감"}})
+
+    return jsonify({'result': 'success', 'comment': "정상적으로 처리되었습니다."})
+
+
+@app.route('/api/joinPurchase', methods=['POST'])
+def joinpurchase_post():
+    account_receive = request.form['account_give']
+    idx_receive = int(request.form['idx_give'])
+
+    finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
+    if finded_post is None:
+        return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
+
+    my_list = finded_post["participants"]
+    account_email = account_receive.split("/")[0]
+    account_name = account_receive.split("/")[1]
+    account_list = [account_email, account_name]
+    my_list.append(account_list)
+
+    # 3. mongoDB에 데이터를 넣기
+    db.posts.update_one({'idx': idx_receive}, {'$set': {'participants': my_list}})
 
     return jsonify({'result': 'success', 'comment': "정상적으로 처리되었습니다."})
 
