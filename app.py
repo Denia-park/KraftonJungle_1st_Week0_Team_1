@@ -139,12 +139,13 @@ def signup_post():
     pw_receive = request.form['pw_give']
     name_receive = request.form['name_give']
 
-    user = {'email': email_receive, 'pw': pw_receive, 'name': name_receive}
-
-    # 3. mongoDB에 데이터를 넣기
-    db.users.insert_one(user)
-
-    return jsonify({'result': 'success', 'comment': "회원가입이 완료되었습니다."})
+    finded_user = db.users.find_one({'email': email_receive}, {'_id': False})
+    if finded_user is None:
+        user = {'email': email_receive, 'pw': pw_receive, 'name': name_receive}
+        db.users.insert_one(user)
+        return jsonify({'result': 'success', 'comment': "회원가입이 완료되었습니다."})
+    else:
+        return jsonify({'result': 'error', 'comment': "이미 존재하는 회원 Email 입니다."})
 
 
 @app.route('/api/addData', methods=['GET'])

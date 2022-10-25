@@ -194,6 +194,9 @@
                         if (response["result"] == "success") {
                             alert(response["comment"]);
                             window.location.href = '/login';
+                        } else if (response["result"] == "error") {
+                            alert(response["comment"]);
+                            document.getElementById("emailError").innerHTML = "이미 존재하는 회원 Email 입니다."
                         } else {
                             alert("서버 오류!")
                         }
