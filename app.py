@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, make_response
 from pymongo import MongoClient
 
 app = Flask(__name__)
@@ -13,9 +13,35 @@ def home():
     return render_template('index.html')
 
 
+@app.route('/login')
+def login_page():
+    return render_template('login.html')
+
+
 @app.route('/signup')
 def signup_page():
     return render_template('signup.html')
+
+
+@app.route('/api/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email_receive = request.form['email_give']
+        pw_receive = request.form['pw_give']
+        signin_user = db.users.find_one({'email': email_receive})
+
+        if signin_user:
+            if (signin_user['pw'] == pw_receive):
+                resp = make_response({'result': 'success'})
+                resp.set_cookie('user_email', email_receive)
+                resp.set_cookie('user_name', signin_user['name'])
+                return resp
+            else:
+                return jsonify({'result': 'fail'})
+        else:
+            return jsonify({'result': 'fail'})
+    else:
+        return jsonify({'result': 'fail'})
 
 
 @app.route('/mypage')

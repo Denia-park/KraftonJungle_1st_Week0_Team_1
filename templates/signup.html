@@ -188,13 +188,12 @@
 
                 $.ajax({
                     type: "POST", // POST 방식으로 요청하겠다.
-                    url: "/api/signup", // /memo라는 url에 요청하겠다.
+                    url: "/api/signUp", // /memo라는 url에 요청하겠다.
                     data: {email_give: email, name_give: name, pw_give: password}, // 데이터를 주는 방법
                     success: function (response) { // 성공하면
                         if (response["result"] == "success") {
                             alert(response["comment"]);
-                            // 3. 성공 시 페이지 새로고침하기
-                            window.location.reload();
+                            window.location.href = '/login';
                         } else {
                             alert("서버 오류!")
                         }
