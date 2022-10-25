@@ -18,6 +18,15 @@ def signup_page():
     return render_template('signup.html')
 
 
+@app.route('/mypage')
+def mypage_page():
+    table_infos = [
+        {"idx": 1, "title": "Jinja제목1", "name": "Jinja이름1", "post-date": "22-10-14", "join-num": 3},
+        {"idx": 2, "title": "Jinja제목2", "name": "Jinja이름2", "post-date": "22-10-11", "join-num": 5}
+    ]
+    return render_template('mypage.html', name1="형기", tableInfoList=table_infos)
+
+
 # API 역할을 하는 부분
 @app.route('/api/signup', methods=['POST'])
 def signup_post():

@@ -67,7 +67,7 @@
 <body>
     <div class="myInfoDiv">
         <div class="myDetail">
-            <p>이름 : 홍길동</p>
+            <p>이름 : {{ name1 }} </p>
             <p>E-Mail : example@example.com</p>
         </div>
 
@@ -88,6 +88,20 @@
             </tr>
             </thead>
             <tbody>
+            {% for tableInfo in tableInfoList %}
+                <tr>
+                    <th scope="row">{{ tableInfo["idx"] }}</th>
+                    <td class="tableContent">{{ tableInfo["title"] }}</td>
+                    <td>{{ tableInfo["name"] }}</td>
+                    <td>{{ tableInfo["post-date"] }}</td>
+                    <td class="tableContent">{{ tableInfo["join-num"] }}</td>
+                    <td>
+                        <button onclick="closePurchase({{ tableInfo["idx"] }})">
+                            마감
+                        </button>
+                    </td>
+                </tr>
+            {% endfor %}
             <tr>
                 <th scope="row">1</th>
                 <td class="tableContent">제목1</td>
@@ -112,6 +126,13 @@
         </table>
 
     </div>
+
+    <script>
+        function closePurchase(idx) {
+            let index = Number(idx);
+            alert(index);
+        }
+    </script>
 
 </body>
 </html>
