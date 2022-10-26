@@ -36,8 +36,15 @@
 
     <script>
         $(document).ready(function () {
-            validate_logged_user();
             validate_user();
+            validate_logged_user();
+            if ('{{post.status}}'=="마감") {
+                $('#close-button').text('마감됨');
+                $('#close-button').prop('disabled', true);
+                $('#close-button').show();
+                $('#join-button').hide();
+                $('#edit-button').hide();
+            }
         });
 
         function participate() {
@@ -82,8 +89,10 @@
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
                         alert(response["comment"]);
+                        location.reload();
                     } else {
                         alert(response["comment"]);
+                        location.href='/';
                     }
                 }
             })
@@ -127,15 +136,15 @@
 
                 <div class="post-info-area col">
                     <p class="mb-0">{{ post.writer_name }}</p>
-                    <small class="text-muted">2022{{post.reg_time}}</small>
+                    <small class="text-muted">2022-{{post.reg_time}}</small>
                     <small class="text-muted participants">참여</small>
                     <small class="text-muted participants">{{post.participants | count}}</small>
                 </div>
                 <div id="post-button" class="post-buttons col d-flex flex-row-reverse">
                     <a id="join-button" class="btn btn-secondary px-2 " onclick="participate()">참여</button>
-                    <a class="btn btn-success px-2 mx-1 own-post" onclick="close_purchase()">마감</a>
-                    <a class="btn btn-primary px-2 mx-1 own-post" href="/edit/{{ post.idx }}">수정</a>
+                    <a id="edit-button"class="btn btn-primary px-2 mx-1 own-post" href="/edit/{{ post.idx }}">수정</a>
                     <a class="btn btn-danger px-2 mx-1 own-post" href="/delete/{{ post.idx }}">삭제</a>
+                    <button id="close-button" class="btn btn-success py-1 px-2 mx-1 own-post" onclick="close_purchase()">마감</button>
                 </div>
             </div>
         </div>
