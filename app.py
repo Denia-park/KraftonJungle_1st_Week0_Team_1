@@ -1,6 +1,5 @@
 from datetime import datetime
-from sre_constants import SUCCESS
-from urllib import parse
+
 from flask import Flask, render_template, request, redirect, make_response, jsonify
 from pymongo import MongoClient
 
@@ -8,6 +7,7 @@ app = Flask(__name__)
 
 client = MongoClient('localhost', 27017)
 db = client.krafton09
+
 
 # GET 메인  페이지
 @app.route('/')
@@ -21,7 +21,6 @@ def main():
 # GET 글 생성 페이지로
 @app.route('/post')
 def post_form():
-
     if request.cookies.get('account') == None:
         return redirect('login')
     return render_template('post_form.html', post=None)
@@ -31,17 +30,12 @@ def post_form():
 @app.route('/post', methods=['POST'])
 def create_post():
     my_account = request.cookies.get("account")
-    account_email = my_account.split("/")[0]
-    account_name = my_account.split("/")[1]
-    user_email = ''
-    user_name = ''
     post_collection = db.posts
     if my_account:
         account_email = my_account.split("/")[0]
         account_name = my_account.split("/")[1]
     else:
-        return jsonify({'result':'fail'})
-
+        return jsonify({'result': 'fail'})
 
     input_title = request.form['input_title']
     input_dtl = request.form['input_dtl']
@@ -64,7 +58,7 @@ def create_post():
         'status': '모집중'
     }
     post_collection.insert_one(doc)
-    return jsonify({'result':'success'})
+    return jsonify({'result': 'success'})
 
 
 # GET 글 상세보기 페이지로
@@ -78,7 +72,7 @@ def post_dtl(idx=None):
 @app.route('/edit/<idx>')
 def post_edit(idx=None):
     if request.cookies.get('user_email') == None:
-        return jsonify({'result':'fail'})
+        return jsonify({'result': 'fail'})
     post_collection = db.posts
     return render_template('post_form.html', post=post_collection.find_one({'idx': int(idx)}))
 
@@ -87,7 +81,7 @@ def post_edit(idx=None):
 @app.route('/edit/<idx>', methods=['POST'])
 def post_update(idx=None):
     if request.cookies.get('user_email') == None:
-        return jsonify({'result':'fail'})
+        return jsonify({'result': 'fail'})
     db.posts.update_many({'idx': int(idx)},
                          {'$set': {'title': request.form['edited_title'], 'description': request.form['edited_dtl']}})
     return jsonify({'result': 'success'})
@@ -116,12 +110,13 @@ def login():
         email_receive = request.form['email_give']
         pw_receive = request.form['pw_give']
         signin_user = db.users.find_one({'email': email_receive})
+        name_receive = signin_user['name']
+        account = email_receive + "/" + name_receive
 
         if signin_user:
             if (signin_user['pw'] == pw_receive):
                 resp = make_response({'result': 'success'})
-                resp.set_cookie('user_email', email_receive)
-                resp.set_cookie('user_name', signin_user['name'])
+                resp.set_cookie('account', account)
                 return resp
             else:
                 return jsonify({'result': 'fail'})
@@ -134,7 +129,6 @@ def login():
 @app.route('/mypage')
 def mypage_page():
     my_account = request.cookies.get("account")
-    print(my_account)
     if my_account is None:
         return redirect('/login')
     else:
@@ -142,11 +136,14 @@ def mypage_page():
         account_name = my_account.split("/")[1]
 
     table_infos = [
-        {"idx": 1, "title": "Jinja제목1", "name": "Jinja이름1", "status": "모집중", "post-date": "22-10-14", "join-num": 3},
-        {"idx": 2, "title": "Jinja제목2", "name": "Jinja이름2", "post-date": "22-10-11", "join-num": 5}
+        {"idx": 1, "title": "Jinja제목1", "writer_name": "Jinja이름1", "status": "모집중", "reg_time": "22-10-14",
+         "participants": [["qwe@qwe.com", "qwe"]]},
+        {"idx": 2, "title": "Jinja제목2", "writer_name": "Jinja이름2", "status": "마감", "reg_time": "22-10-11",
+         "participants": [["qwe@qwe.com", "qwe"], ["qqq@qqq.com", "qqq"]]}
     ]
+    
     return render_template('mypage.html', account_name=account_name, account_email=account_email,
-                           tableInfoList=table_infos)
+                           all_posts=table_infos)
 
 
 # API 역할을 하는 부분
@@ -182,6 +179,7 @@ def add_data():
     db.posts.insert_one(tempdata)
 
     return jsonify({'result': 'success', 'comment': "data 추가가 완료되었습니다."})
+
 
 @app.route('/api/closePurchase', methods=['POST'])
 def closepurchase_post():
@@ -221,7 +219,6 @@ def joinpurchase_post():
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
-    print(account_receive)
     print(idx_receive)
     my_list = finded_post["participants"]
 
