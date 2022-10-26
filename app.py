@@ -108,6 +108,8 @@ def login():
         email_receive = request.form['email_give']
         pw_receive = request.form['pw_give']
         signin_user = db.users.find_one({'email': email_receive})
+        if (signin_user is None):
+            return jsonify({'result' : 'fail'})
         name_receive = signin_user['name']
         account = email_receive + "/" + name_receive
 
