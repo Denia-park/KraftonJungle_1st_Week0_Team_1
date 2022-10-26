@@ -78,6 +78,11 @@
             color: black;
         }
 
+        .smallSize {
+            font-size: 10px;
+            font-weight: bold;
+        }
+
     </style>
 </head>
 <body>
@@ -122,9 +127,12 @@
                     <td>{{ tableInfo["post-date"] }}</td>
                     <td>{{ tableInfo["join-num"] }}</td>
                     <td>
-                        <button type="button" class="btn btn-primary" onclick="closePurchase({{ tableInfo["idx"] }})">
-                            마감
-                        </button>
+                        {% if tableInfo["status"] == "모집중" %}
+                            <button type="button" class="btn btn-success smallSize"
+                                    onclick="closePurchase({{ tableInfo["idx"] }})">
+                                마감
+                            </button>
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
@@ -135,16 +143,12 @@
                 <td>22.10.15</td>
                 <td>3</td>
                 <td>
-                    <button type="button" class="btn btn-primary" onclick="closePurchase(1)">마감
+                    <button type="button" class="btn btn-success smallSize" onclick="closePurchase(1)">마감
                     </button>
                 </td>
             </tr>
             </tbody>
         </table>
-
-        <button onclick="joinPurchase(1)">
-            마감
-        </button>
 
     </div>
 

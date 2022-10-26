@@ -126,7 +126,7 @@ def login():
 @app.route('/mypage')
 def mypage_page():
     table_infos = [
-        {"idx": 1, "title": "Jinja제목1", "name": "Jinja이름1", "post-date": "22-10-14", "join-num": 3},
+        {"idx": 1, "title": "Jinja제목1", "name": "Jinja이름1", "status": "모집중", "post-date": "22-10-14", "join-num": 3},
         {"idx": 2, "title": "Jinja제목2", "name": "Jinja이름2", "post-date": "22-10-11", "join-num": 5}
     ]
     return render_template('mypage.html', name1="형기", tableInfoList=table_infos)
