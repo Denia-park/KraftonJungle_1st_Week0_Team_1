@@ -12,37 +12,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            box-sizing: border-box;
-            font-size: 11px;
-        }
 
-        html {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-
-        body {
-            width: 45%;
-            border: 1px solid #00C73C;
+        .wrapper {
+            padding: 10px;
+            max-width: 500px;
+            padding: 0px 70px 150px 70px;
+            margin-top: 100px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         input {
-            border: 1px solid #00C73C;
             border-radius: 3px;
             line-height: 35px;
             font-size: 12px;
             padding-left: 10px;
             padding-right: 10px;
-        }
-
-
-        .wrapper {
-            padding: 10px;
         }
 
         div {
@@ -53,44 +38,32 @@
         .title {
             text-align: center;
             font-weight: 700;
-            color: #00C73C;
         }
 
-        .email input {
-            width: 100%;
+        .text-box {
+            width: 358px;
+            border: 1px solid #ced4da;
         }
 
-        .name input {
-            width: 100%;
+
+        .email, .password, .name, .passwordCheck, .signUp {
+            padding: 0 70px;
+            border-radius: 5px;
         }
 
-        .password input {
-            width: 100%;
-        }
-
-        .passwordCheck input {
-            width: 100%;
-        }
-
-        .signUp button {
+        
+        #signUpButton {
             background-color: #00C73C;
             color: white;
+            width: 380px;
             height: 40px;
-            width: 100%;
-            cursor: pointer;
-            font-size: 15px;
-            font-weight: 700;
-            border: 1px solid #00C73C;
-        }
-
-        button {
-            cursor: pointer;
-            height: 30px;
+            border: 0;
+            border-radius: 5px;
         }
 
         .error {
             font-size: 1px;
-            height: 20px;
+            height: 15px;
             color: red;
             font-weight: 700;
         }
@@ -98,29 +71,25 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="title"><h1 style="font-size: 21px;">회원가입</h1></div>
+        <div class="title"><p style="font-size: 40px; margin-bottom: 40px">회원가입</p></div>
         <div class="email">
-            <input id="email" type="text" placeholder="이메일을 입력해 주세요.">
+            <input id="email" class="form-control text-box" type="text" placeholder="Slack 이메일을 입력해 주세요.">
             <div id="emailError" class="error"></div>
         </div>
         <div class="name">
-            <input id="name" type="text" placeholder="이름을 입력해 주세요.">
+            <input id="name" class="form-control text-box" type="text" placeholder="이름을 입력해 주세요.">
             <div id="nameError" class="error"></div>
         </div>
         <div class="password">
-            <input id="password" type="password" placeholder="비밀번호를 입력해 주세요.">
+            <input id="password" class="form-control text-box" type="password" placeholder="비밀번호를 입력해 주세요.">
             <div id="passwordError" class="error"></div>
         </div>
         <div class="passwordCheck">
-            <input id="passwordCheck" type="password" placeholder="비밀번호를 다시 입력해 주세요.">
+            <input id="passwordCheck" class="form-control text-box" style="margin-bottom: 10px;" type="password" placeholder="비밀번호를 다시 입력해 주세요.">
             <div id="passwordCheckError" class="error"></div>
         </div>
-
-        <div class="line">
-            <hr style="border-color: #00C73C;">
-        </div>
         <div class="signUp">
-            <button id="signUpButton" onclick="signUpCheck()">가입하기</button>
+            <button type="submit" id="signUpButton" onclick="signUpCheck()">가입하기</button>
         </div>
     </div>
 
