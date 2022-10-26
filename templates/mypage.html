@@ -14,7 +14,7 @@
             integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
+
     <script src="../static/navbar.js"></script>
     <script src="/static/cookie.js"></script>
 
@@ -22,11 +22,6 @@
 
         .navbar {
             margin-bottom: 40px;
-        }
-
-        .mypage {
-            width: 80%;
-            border: 1px solid #00C73C;
         }
 
         h1,
@@ -49,7 +44,7 @@
             display: flex;
             justify-content: center;
 
-             margin-top: 20px; 
+            margin-top: 20px;
 
             font-size: 11px;
         }
@@ -58,17 +53,25 @@
             font-size: 20px;
         }
 
-        .tableTitle {
-            width: 150px;
+        .title_td {
+            text-align: left;
         }
 
         th,
         td {
             text-align: center;
+            vertical-align: middle;
         }
 
-        .tableContentTitle {
-            text-align: left;
+
+        td a {
+            text-decoration: none;
+            color: black;
+        }
+
+        td a:hover {
+            text-decoration: none;
+            color: black;
         }
 
         .inner_info {
@@ -79,7 +82,11 @@
         .smallSize {
             font-size: 10px;
             font-weight: bold;
-        } 
+        }
+
+        .status_end {
+            text-decoration: line-through;
+        }
     </style>
 </head>
 
@@ -114,44 +121,54 @@
             내가 쓴 글
         </h3>
         <div class="myBoardDiv">
-            <table class="table table-hover mt-3">
+            <table class="table mt-3">
                 <colgroup>
                     <col width="6%"/>
-                    <col width="60%"/>
+                    <col width="45%"/>
                     <col width="10%"/>
+
                 </colgroup>
                 <thead class="table-light">
                 <tr>
                     <th scope="col">번호</th>
-                    <th scope="col" class="tableTitle">제목</th>
+                    <th scope="col">제목</th>
                     <th scope="col">글쓴이</th>
                     <th scope="col">작성일</th>
                     <th scope="col">참여인원</th>
-                    <th scope="col"></th>
+                    <th scope="col">상태</th>
+                    <th scope="col">마감</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for post in all_posts %}
-                    <tr style = "height:46px;">
+                    <tr style="height:46px; font-size:13px;">
                         <th scope="row">{{ post.idx }}</th>
-                        <td class="title_td">
-                            <a href="/post/{{ post.idx }}">
-                                {{ post.title }}
-                            </a>
+                        {% if post.status == "모집중" %}
+                            <td class="title_td">
+                                {% else %}
+                            <td class="title_td status_end">
+                        {% endif %}
+                        <a href="/post/{{ post.idx }}">
+                            {{ post.title }}
+                        </a>
                         </td>
                         <td>{{ post.writer_name }}</td>
-                        <td class="text-muted reg-time">{{ post.reg_time }}</td>
+                        <td>{{ post.reg_time }}</td>
                         <td>{{ post.participants | count }}</td>
+                        <td>{{ post.status }}</td>
                         <td>
                             {% if post.status == "모집중" %}
                                 <button type="button" class="btn btn-success smallSize"
                                         onclick="closePurchase({{ post.idx }})">
                                     마감
                                 </button>
+                            {% else %}
+                                <button type="button" class="btn btn-success smallSize" disabled>
+                                    완료
+                                </button>
                             {% endif %}
                     </tr>
                 {% endfor %}
-                
                 </tbody>
             </table>
 
@@ -172,31 +189,6 @@
             $.ajax({
                 type: "POST", // POST 방식으로 요청하겠다.
                 url: "/api/closePurchase",
-                data: {account_give: myAccount, idx_give: idx}, // 데이터를 주는 방법
-                success: function (response) { // 성공하면
-                    if (response["result"] == "success") {
-                        alert(response["comment"]);
-                        // 3. 성공 시 페이지 새로고침하기
-                        window.location.reload();
-                    } else if (response["result"] == "error") {
-                        alert(response["comment"]);
-                    } else {
-                        alert("서버 오류!")
-                    }
-                }
-            })
-        }
-
-        function joinPurchase(idx) {
-            //쿠키를 가져와서 쿠키에 저장된 데이터를 보냄
-            let myAccount = getCookie("account")
-            //서버에서 쿠키의 데이터와 idx 의 작성자 정보를 비교해서 옳은 유저이면
-            //마감기능을 수행 후 success 를 return
-            //아니면 실패를 return
-
-            $.ajax({
-                type: "POST", // POST 방식으로 요청하겠다.
-                url: "/api/joinPurchase",
                 data: {account_give: myAccount, idx_give: idx}, // 데이터를 주는 방법
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
