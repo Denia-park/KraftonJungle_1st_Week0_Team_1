@@ -9,7 +9,7 @@ client = MongoClient('localhost', 27017)
 db = client.krafton09
 
 
-# GET 메인 페이지
+# GET 메인  페이지
 @app.route('/<filter>')
 @app.route('/')
 def main(filter=None):
