@@ -127,8 +127,11 @@ def login():
 def mypage_page():
     my_account = request.cookies.get("account")
     print(my_account)
-    account_email = my_account.split("/")[0]
-    account_name = my_account.split("/")[1]
+    if my_account is None:
+        return redirect('/login')
+    else:
+        account_email = my_account.split("/")[0]
+        account_name = my_account.split("/")[1]
 
     table_infos = [
         {"idx": 1, "title": "Jinja제목1", "name": "Jinja이름1", "status": "모집중", "post-date": "22-10-14", "join-num": 3},
@@ -183,8 +186,12 @@ def closepurchase_post():
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
 
-    account_email = my_account.split("/")[0]
-    account_name = my_account.split("/")[1]
+    if my_account is None:
+        account_email = "fail.com"
+        account_name = "fail"
+    else:
+        account_email = my_account.split("/")[0]
+        account_name = my_account.split("/")[1]
 
     if finded_post["writer_email"] != account_email or finded_post["writer_name"] != account_name:
         return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
@@ -201,11 +208,15 @@ def joinpurchase_post():
     my_account = request.cookies.get("account")
     idx_receive = int(request.form['idx_give'])
 
+    if my_account is None:
+        return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
+
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
 
     my_list = finded_post["participants"]
+
     account_email = my_account.split("/")[0]
     account_name = my_account.split("/")[1]
     account_list = [account_email, account_name]
