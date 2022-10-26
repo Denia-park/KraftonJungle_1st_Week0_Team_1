@@ -79,8 +79,6 @@ def post_dtl(idx=None):
 # 글 수정
 @app.route('/edit/<idx>')
 def post_edit(idx=None):
-    if request.cookies.get('user_email') == None:
-        return jsonify({'result': 'fail'})
     post_collection = db.posts
     return render_template('post_form.html', post=post_collection.find_one({'idx': int(idx)}))
 
@@ -88,7 +86,7 @@ def post_edit(idx=None):
 # 글 수정
 @app.route('/edit/<idx>', methods=['POST'])
 def post_update(idx=None):
-    if request.cookies.get('user_email') == None:
+    if request.cookies.get('account') == None:
         return jsonify({'result': 'fail'})
     db.posts.update_many({'idx': int(idx)},
                          {'$set': {'title': request.form['edited_title'], 'description': request.form['edited_dtl']}})

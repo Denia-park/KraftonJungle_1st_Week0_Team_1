@@ -1,12 +1,7 @@
 function logout() {
-  deleteCookie("account");
+  document.cookie = 'account=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=localhost; path=/'
   alert("로그아웃 되었습니다.")
   location.href = "/";
-}
-
-//쿠키삭제
-function deleteCookie(name) {
-  document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;domain=localhost; path=/'
 }
 
 function validate_user() {

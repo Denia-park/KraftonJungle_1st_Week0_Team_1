@@ -30,6 +30,7 @@
         .post-buttons a {
             font-size: 14px;
         }
+
     </style>
     <title>Document</title>
 
@@ -40,19 +41,21 @@
         });
 
         function participate() {
-            // document.cookie 쿠키에서 이메일을 가져온다
-            // 임시 이메일
-            let participants_email = "wednesday5028@gmail.com";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let splited_str = decodedCookie.split('/');
+            var cookieEmail = splited_str[0];
+            let idxOfKey = cookieEmail.indexOf('=');
+            let email = cookieEmail.substring(idxOfKey + 2, cookieEmail.length - 1);
+
             $.ajax({
                 type: "POST",
                 url: "/api/joinPurchase",
-                data: { 'account_give': participants_email, 'idx_give': '{{post.idx}}' },
+                data: { 'account_give': email, 'idx_give': '{{post.idx}}' },
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
                         alert(response["comment"]);
                     } else {
-                        alert("로그인이 필요합니다.");
-                        location.replace("/login");
+                        alert(response["comment"]);
                     }
                 }
             })
@@ -66,24 +69,39 @@
                 let temp_html = `<button class="login-button border ms-2" onclick="logout()">마이페이지</button>`;
                 $("#log-info").append(temp_html);
                 $("#login-button").attr('onclick', "location.href='/#'")
-
             } else {
                 $("#login-button").text('로그인');
             }
         }
 
+        function close_purchase() {
+            $.ajax({
+                type: "POST",
+                url: "/api/closePurchase",
+                data: {'idx_give': '{{post.idx}}' },
+                success: function (response) { // 성공하면
+                    if (response["result"] == "success") {
+                        alert(response["comment"]);
+                    } else {
+                        alert(response["comment"]);
+                    }
+                }
+            })
+        }
 
         function validate_logged_user() {
             let decodedCookie = decodeURIComponent(document.cookie);
-            let ca = decodedCookie.split(';');
+            let ca = decodedCookie.split('/');
             var cookieEmail = ca[0];
             let idxOfKey = cookieEmail.indexOf('=');
-            let username = cookieEmail.substring(idxOfKey + 2, cookieEmail.length - 1);
+            let email = cookieEmail.substring(idxOfKey + 2, cookieEmail.length);
 
-            if (username == '{{post.writer_email}}') {
-                $("#post-button").show();
+            if (email == '{{post.writer_email}}') {
+                $(".own-post").show();
+                $('#join-button').hide();
             } else {
-                document.getElementById("post-button").setAttribute('style', 'display:none !important');
+                $('#join-button').show();
+                $(".own-post").hide();
             }
         }
     </script>
@@ -109,15 +127,15 @@
 
                 <div class="post-info-area col">
                     <p class="mb-0">{{ post.writer_name }}</p>
-                    <small class="text-muted">2022.10.24</small>
+                    <small class="text-muted">2022{{post.reg_time}}</small>
                     <small class="text-muted participants">참여</small>
-                    <small class="text-muted participants">3</small>
+                    <small class="text-muted participants">{{post.participants | count}}</small>
                 </div>
-                <button type="button" onclick="participate()">참여</button>
                 <div id="post-button" class="post-buttons col d-flex flex-row-reverse">
-                    <a class="btn btn-success px-2" href="/edit/{{ post.idx }}">마감</a>
-                    <a class="btn btn-primary px-2" href="/edit/{{ post.idx }}">수정</a>
-                    <a class="btn btn-danger px-2" href="/delete/{{ post.idx }}">삭제</a>
+                    <a id="join-button" class="btn btn-secondary px-2 " onclick="participate()">참여</button>
+                    <a class="btn btn-success px-2 mx-1 own-post" onclick="close_purchase()">마감</a>
+                    <a class="btn btn-primary px-2 mx-1 own-post" href="/edit/{{ post.idx }}">수정</a>
+                    <a class="btn btn-danger px-2 mx-1 own-post" href="/delete/{{ post.idx }}">삭제</a>
                 </div>
             </div>
         </div>
