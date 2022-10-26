@@ -40,6 +40,10 @@
             validate_user();
         });
 
+        $( function () {
+            $( '[data-bs-toggle="popover"]' ).popover()
+        } );
+
         function participate() {
             let decodedCookie = decodeURIComponent(document.cookie);
             let splited_str = decodedCookie.split('/');
@@ -130,6 +134,11 @@
                     <small class="text-muted">2022{{post.reg_time}}</small>
                     <small class="text-muted participants">참여</small>
                     <small class="text-muted participants">{{post.participants | count}}</small>
+                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{%for idx in post.participants %}
+                     {{idx[1]}} 
+                 {% endfor %}">
+                        <button class="btn btn-primary" type="button" disabled>참여자 명단</button>
+                      </span> 
                 </div>
                 <div id="post-button" class="post-buttons col d-flex flex-row-reverse">
                     <a id="join-button" class="btn btn-secondary px-2 " onclick="participate()">참여</button>
