@@ -10,15 +10,9 @@ db = client.krafton09
 
 
 # GET 메인  페이지
-@app.route('/<filter>')
 @app.route('/')
 def main(filter=None):
-    if filter:
-        print('필터온')
-    else:
-        print('필터x')
-
-    all_posts = list(db.posts.find({}))
+    all_posts = list(db.posts.find({}, {'_id': False}).sort('idx', -1))
     return render_template('main.html', all_posts=all_posts)
 
 
@@ -38,8 +32,8 @@ def create_post():
     user_email = request.cookies.get('user_email')
     user_name = request.cookies.get('user_name')
 
-    post_title = request.form['post_title']
-    post_dtl = request.form['post_dtl']
+    input_title = request.form['input_title']
+    input_dtl = request.form['input_dtl']
     reg_time = datetime.now()
 
     idx_list = list(db.posts.find({}, {'_id': False}).sort('idx', -1).limit(1))
@@ -53,10 +47,10 @@ def create_post():
         'idx': idx,
         'writer_name': user_name,
         'writer_email': user_email,
-        'title': post_title,
-        'description': post_dtl,
+        'title': input_title,
+        'description': input_dtl,
         'participants': 0,
-        'reg_time': reg_time.strftime('%Y-%m-%d %H:%M:%S'),
+        'reg_time': reg_time.strftime('%m-%d %H:%M'),
         'status': '모집중'
     }
     post_collection.insert_one(doc)
