@@ -1,5 +1,6 @@
 from datetime import datetime
-
+from sre_constants import SUCCESS
+from urllib import parse
 from flask import Flask, render_template, request, redirect, make_response, jsonify
 from pymongo import MongoClient
 
@@ -8,53 +9,61 @@ app = Flask(__name__)
 client = MongoClient('localhost', 27017)
 db = client.krafton09
 
-
 # GET 메인  페이지
 @app.route('/')
-def main(filter=None):
+def main():
     all_posts = list(db.posts.find({}, {'_id': False}).sort('idx', -1))
+    if all_posts is None:
+        return render_template('main.html')
     return render_template('main.html', all_posts=all_posts)
 
 
 # GET 글 생성 페이지로
-
-
 @app.route('/post')
 def post_form():
+
+    # 쿠키값 없으면 로그인 페이지로 돌린다.
+    print(request.cookies.get('user_name'))
+    if request.cookies.get('user_email') == None:
+        return redirect('login')
     return render_template('post_form.html', post=None)
 
 
 # POST 글 생성
 @app.route('/post', methods=['POST'])
 def create_post():
+    user_email = ''
+    user_name = ''
     post_collection = db.posts
+    if request.cookies.get('user_email'):
+        user_email = request.cookies.get('user_email')
+        user_name = request.cookies.get('user_name')
+    else:
+        return jsonify({'result':'fail'})
 
-    user_email = request.cookies.get('user_email')
-    user_name = request.cookies.get('user_name')
 
     input_title = request.form['input_title']
     input_dtl = request.form['input_dtl']
     reg_time = datetime.now()
-
     idx_list = list(db.posts.find({}, {'_id': False}).sort('idx', -1).limit(1))
 
     if len(idx_list) == 0:
         idx = 1
     else:
         idx = idx_list[0]['idx'] + 1
-
+    empty_list = ['wednesday5028@gmail.com']
     doc = {
         'idx': idx,
         'writer_name': user_name,
         'writer_email': user_email,
         'title': input_title,
         'description': input_dtl,
-        'participants': 0,
-        'reg_time': reg_time.strftime('%m-%d %H:%M'),
+        'participants': empty_list,
+        'reg_time': reg_time.strftime('%m-%d'),
         'status': '모집중'
     }
     post_collection.insert_one(doc)
-    return redirect('/')
+    return jsonify({'result':'success'})
 
 
 # GET 글 상세보기 페이지로
@@ -67,6 +76,8 @@ def post_dtl(idx=None):
 # 글 수정
 @app.route('/edit/<idx>')
 def post_edit(idx=None):
+    if request.cookies.get('user_email') == None:
+        return jsonify({'result':'fail'})
     post_collection = db.posts
     return render_template('post_form.html', post=post_collection.find_one({'idx': int(idx)}))
 
@@ -74,6 +85,8 @@ def post_edit(idx=None):
 # 글 수정
 @app.route('/edit/<idx>', methods=['POST'])
 def post_update(idx=None):
+    if request.cookies.get('user_email') == None:
+        return jsonify({'result':'fail'})
     db.posts.update_many({'idx': int(idx)},
                          {'$set': {'title': request.form['edited_title'], 'description': request.form['edited_dtl']}})
     return jsonify({'result': 'success'})
@@ -166,7 +179,6 @@ def add_data():
 
     return jsonify({'result': 'success', 'comment': "data 추가가 완료되었습니다."})
 
-
 @app.route('/api/closePurchase', methods=['POST'])
 def closepurchase_post():
     # request.cookies.get("")
@@ -197,7 +209,8 @@ def joinpurchase_post():
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
-
+    print(account_receive)
+    print(idx_receive)
     my_list = finded_post["participants"]
     account_email = account_receive.split("/")[0]
     account_name = account_receive.split("/")[1]
