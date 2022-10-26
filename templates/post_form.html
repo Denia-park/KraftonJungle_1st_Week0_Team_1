@@ -14,7 +14,7 @@
     integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
     crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  
+
   <script>
     function edit_post() {
       var edited_title = $("#post-title").val();
@@ -23,14 +23,15 @@
 
       $.ajax({
         type: "POST",
-        url: "/edit/"+idx,
+        url: "/edit/" + idx,
         data: { 'edited_title': edited_title, 'edited_dtl': edited_dtl },
         success: function (response) { // 성공하면
           if (response["result"] == "success") {
             alert("포스팅 성공!");
-            location.reload();
+            location.reload('/');
           } else {
-            alert("서버 오류!")
+            alert("로그인이 필요합니다.");
+            location.replace("/login");
           }
         }
       })
@@ -47,17 +48,26 @@
         success: function (response) { // 성공하면
           if (response["result"] == "success") {
             alert("포스팅 성공!");
-            location.reload();
+            location.replace("/");
           } else {
-            alert("서버 오류!")
+            alert("로그인이 필요합니다.");
+            location.replace("/login");
           }
         }
       })
     }
-    
+
   </script>
+  <style>
+    .post_button {
+      background-color: #00C73C;
+      border: none;
+      color: white;
+    }
+  </style>
   <title>Document</title>
 </head>
+
 <body>
   <!-- nav bar -->
   <nav class="navbar navbar-expand-lg">
@@ -69,29 +79,33 @@
   </nav>
 
   <div class="container my-3">
-  {% if post.idx %}
-    <h2>글수정</h2>
-  {% else %}
-    <h2>공구 글쓰기</h2>
-  {% endif %}
-  <hr>
-  <form action="post" method="post" class="">
-    <input type="hidden" value="{{ post.idx }}" id="post_idx">
-    <div class="mb-3">
-      <input type="text" value="{{ post.title }}" class="form-control" id="post-title" name="post_title"
-        placeholder="제목을 입력해 주세요.">
-    </div>
-    <div class="mb-3">
-      <textarea class="form-control" id="post-dtl" rows="15" name="post_dtl" placeholder="내용을 입력해 주세요.">{{post.description}}</textarea>
-    </div>
-
     {% if post.idx %}
-    <button type="button" onclick= edit_post()>글수정</button>
+    <h2>글수정</h2>
     {% else %}
-    <button type="submit">글쓰기</button>
+    <h2>공구 글쓰기</h2>
     {% endif %}
-  </form>
-</div>
+    <hr>
+    <div>
+      <input type="hidden" value="{{ post.idx }}" id="post_idx">
+      <div class="mb-3">
+        <input type="text" value="{{ post.title }}" class="form-control" id="post-title" placeholder="제목을 입력해 주세요.">
+      </div>
+      <div class="mb-3">
+        <textarea class="form-control" id="post-dtl" rows="15"
+          placeholder="내용을 입력해 주세요.">{{post.description}}</textarea>
+      </div>
+
+      {% if post.idx %}
+      <div class="d-grid gap-2 ">
+        <button class="post_button py-1" type="button" onclick=edit_post()>글수정</button>
+      </div>
+      {% else %}
+      <div class="d-grid gap-2 ">
+        <button class="post_button py-1" type="button" onclick=create_post()>글쓰기</button>
+      </div>
+      {% endif %}
+    </div>
+  </div>
 </body>
 
 </html>

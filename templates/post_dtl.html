@@ -33,8 +33,52 @@
 
     <script>
         $(document).ready(function () {
-            validate_user()
+            validate_user();
+            validate_loginfo();
         });
+
+        function participate() {
+            // document.cookie 쿠키에서 이메일을 가져온다
+            // 임시 이메일
+            let participants_email = "wednesday5028@gmail.com";
+            $.ajax({
+                type: "POST",
+                url: "/api/joinPurchase",
+                data: { 'account_give': participants_email, 'idx_give': '{{post.idx}}' },
+                success: function (response) { // 성공하면
+                    if (response["result"] == "success") {
+                        alert(response["comment"]);
+                    } else {
+                        alert("로그인이 필요합니다.");
+                        location.replace("/login");
+                    }
+                }
+            })
+        }
+
+        function logout() {
+            deleteCookie("account");
+            location.href = "/";
+        }
+        //쿠키삭제
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+
+        function validate_loginfo() {
+            // 쿠키가 있으면 로그아웃, 마이페이지 나오게 한다.
+            if (document.cookie) {
+                $("#login-button").text('로그아웃');
+                let temp_html = `<button class="login-button border ms-2" onclick="logout()">마이페이지</button>`;
+                $("#log-info").append(temp_html);
+                $("#login-button").attr('onclick', "location.href='/#'")
+
+            } else {
+                $("#login-button").text('로그인');
+            }
+        }
+
+
         function validate_user() {
             let decodedCookie = decodeURIComponent(document.cookie);
             let ca = decodedCookie.split(';');
@@ -42,7 +86,7 @@
             let idxOfKey = cookieEmail.indexOf('=');
             let username = cookieEmail.substring(idxOfKey + 2, cookieEmail.length - 1);
 
-            if (username == '{{post.writer_email}}'){
+            if (username == '{{post.writer_email}}') {
                 $("#post-button").show();
             } else {
                 document.getElementById("post-button").setAttribute('style', 'display:none !important');
@@ -56,7 +100,8 @@
     <nav class="navbar navbar-expand-lg">
         <div class="container">
             <a class="navbar-brand" href="/">KRAFTON09</a>
-            <div class="log-info d-flex">
+            <div id="log-info" class="log-info d-flex me-3">
+                <button id="login-button" class="login-button border" onclick="location.href='/login'">로그인</button>
             </div>
         </div>
     </nav>
@@ -74,9 +119,9 @@
                     <small class="text-muted participants">참여</small>
                     <small class="text-muted participants">3</small>
                 </div>
-
+                <button type="button" onclick="participate()">참여</button>
                 <div id="post-button" class="post-buttons col d-flex flex-row-reverse">
-                    <a class="btn btn-success px-2">마감</button>
+                    <a class="btn btn-success px-2" href="/edit/{{ post.idx }}">마감</a>
                     <a class="btn btn-primary px-2" href="/edit/{{ post.idx }}">수정</a>
                     <a class="btn btn-danger px-2" href="/delete/{{ post.idx }}">삭제</a>
                 </div>
