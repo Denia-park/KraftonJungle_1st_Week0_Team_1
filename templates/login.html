@@ -14,6 +14,7 @@
     #login-wrap {
         position: relative;
     }
+
     .login {
         max-width: 500px;
         text-align: center;
@@ -25,29 +26,42 @@
     }
 
     #login-button {
-        background-color : #00C73C;
-        color : white;
-        width : 358px;
-        height : 50px;
+        background-color: #00C73C;
+        color: white;
+        width: 358px;
+        height: 50px;
         margin: 50px 0;
     }
+
     #signup-button {
-        width : 100px;
+        width: 100px;
     }
+
     #email {
-        margin-bottom : 25px;
+        margin-bottom: 25px;
     }
+
     #password {
-        margin-top : 25px;
+        margin-top: 25px;
     }
+
     .logo {
-        margin-bottom : 100px;
+        margin-bottom: 100px;
     }
+
     .logo-text {
-        display : inline;
+        display: inline;
     }
 </style>
 <script>
+    $(document).ready(function () {
+        $(".login").keydown(function (key) {
+            if (key.keyCode == 13) {
+                loginFunction()
+            }
+        });
+    });
+
     function loginFunction() {
         let email = document.getElementById("email").value
         let password = document.getElementById("password").value
@@ -58,10 +72,10 @@
             data: {email_give: email, pw_give: password},
             success: function (response) {
                 if (response['result'] == 'success') {
-                    alert('login success')
+                    alert('로그인 성공!!')
                     window.location.href = '/'
                 } else if (response['result'] == 'fail') {
-                    alert('login failed')
+                    alert('아이디 혹은 패스워드가 틀립니다')
                     window.location.reload()
                 }
             }
@@ -71,7 +85,8 @@
 <body>
     <div id="login-wrap">
         <div class="login">
-            <div class="logo"><h1 class="logo-text">krafton </h1><h1 class="logo-text" style="color:#00C73C">09</h1></div>
+            <div class="logo"><h1 class="logo-text">krafton </h1>
+                <h1 class="logo-text" style="color:#00C73C">09</h1></div>
             <div class="form-floating mb-3">
                 <input type="email" class="form-control" id="email" placeholder="name@example.com">
                 <label for="email">Email address</label>
@@ -81,10 +96,11 @@
                 <label for="password">Password</label>
             </div>
             <div class="button-box">
-                <button type="submit" class="btn" id ="login-button" onclick="loginFunction()">로그인</button>
+                <button type="submit" class="btn" id="login-button" onclick="loginFunction()">로그인</button>
             </div>
             <div>
-                <text>아이디가 없으신가요?  </text><a href="signup" style="color:#00C73C; text-decoration: none;">회원 가입</a>
+                <text>아이디가 없으신가요?</text>
+                <a href="signup" style="color:#00C73C; text-decoration: none;">회원 가입</a>
             </div>
         </div>
     </div>
