@@ -86,13 +86,11 @@ def post_update(idx=None):
                          {'$set': {'title': request.form['edited_title'], 'description': request.form['edited_dtl']}})
     return jsonify({'result': 'success'})
 
-
 # 글 삭제
 @app.route('/delete/<idx>')
 def post_delete(idx=None):
     db.posts.delete_one({'idx': int(idx)})
     return redirect('/')
-
 
 @app.route('/login')
 def login_page():
@@ -124,7 +122,6 @@ def login():
             return jsonify({'result': 'fail'})
     else:
         return jsonify({'result': 'fail'})
-
 
 @app.route('/mypage')
 def mypage_page():
@@ -219,7 +216,6 @@ def joinpurchase_post():
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
-    print(idx_receive)
     my_list = finded_post["participants"]
 
     account_email = my_account.split("/")[0]
@@ -231,7 +227,6 @@ def joinpurchase_post():
     db.posts.update_one({'idx': idx_receive}, {'$set': {'participants': my_list}})
 
     return jsonify({'result': 'success', 'comment': "정상적으로 처리되었습니다."})
-
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
