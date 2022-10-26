@@ -3,32 +3,28 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>마이 페이지</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/navbar.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
+    
+    <script src="../static/navbar.js"></script>
     <script src="/static/cookie.js"></script>
 
     <style>
-        * {
-            margin: 0;
-            box-sizing: border-box;
-            color: #00C73C;
+
+        .navbar {
+            margin-bottom: 40px;
         }
 
-        html {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-
-        body {
+        .mypage {
             width: 80%;
             border: 1px solid #00C73C;
         }
@@ -53,7 +49,7 @@
             display: flex;
             justify-content: center;
 
-            margin-top: 20px;
+             margin-top: 20px; 
 
             font-size: 11px;
         }
@@ -83,88 +79,89 @@
         .smallSize {
             font-size: 10px;
             font-weight: bold;
-        }
+        } 
     </style>
 </head>
 
 <body>
-    <h1>
-        마이 페이지
-    </h1>
-    <div class="myInfoDiv">
-        <div class="myDetail">
-            <div>이름 :
-                <p class="inner_info">{{ account_name }}</p>
-            </div>
-            <div>E-Mail :
-                <p class="inner_info">{{ account_email }}</p>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand" href="/">KRAFTON09</a>
+            <div id="log-info" class="log-info d-flex me-3">
+                <button id="login-button" class="login-button border" onclick="location.href='/login'">로그인</button>
             </div>
         </div>
+    </nav>
+    <div class="container" id="mypage">
+        <h1>
+            마이 페이지
+        </h1>
+        <div class="myInfoDiv">
+            <div class="myDetail">
+                <div>이름 :
+                    <p class="inner_info">{{ account_name }}</p>
+                </div>
+                <div>E-Mail :
+                    <p class="inner_info">{{ account_email }}</p>
+                </div>
+            </div>
 
-    </div>
-    <div class="line">
-        <hr>
-    </div>
-    <h3>
-        내가 쓴 글
-    </h3>
-    <div class="myBoardDiv">
-        <table class="table table-hover mt-3">
-            <colgroup>
-                <col width="6%"/>
-                <col width="60%"/>
-                <col width="10%"/>
-
-            </colgroup>
-            <thead class="table-light">
-            <tr>
-                <th scope="col">번호</th>
-                <th scope="col" class="tableTitle">제목</th>
-                <th scope="col">글쓴이</th>
-                <th scope="col">작성일</th>
-                <th scope="col">참여인원</th>
-                <th scope="col"></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for post in all_posts %}
+        </div>
+        <div class="line">
+            <hr>
+        </div>
+        <h3>
+            내가 쓴 글
+        </h3>
+        <div class="myBoardDiv">
+            <table class="table table-hover mt-3">
+                <colgroup>
+                    <col width="6%"/>
+                    <col width="60%"/>
+                    <col width="10%"/>
+                </colgroup>
+                <thead class="table-light">
                 <tr>
-                    <th scope="row">{{ post.idx }}</th>
-                    <td class="title_td">
-                        <a href="/post/{{ post.idx }}">
-                            {{ post.title }}
-                        </a>
-                    </td>
-                    <td>{{ post.writer_name }}</td>
-                    <td class="text-muted reg-time">{{ post.reg_time }}</td>
-                    <td>{{ post.participants | count }}</td>
-                    <td>
-                        {% if post.status == "모집중" %}
-                            <button type="button" class="btn btn-success smallSize"
-                                    onclick="closePurchase({{ post.idx }})">
-                                마감
-                            </button>
-                        {% endif %}
-                    </td>
+                    <th scope="col">번호</th>
+                    <th scope="col" class="tableTitle">제목</th>
+                    <th scope="col">글쓴이</th>
+                    <th scope="col">작성일</th>
+                    <th scope="col">참여인원</th>
+                    <th scope="col"></th>
                 </tr>
-            {% endfor %}
-            <tr>
-                <th scope="row">1</th>
-                <td class="tableContentTitle">제목1</td>
-                <td>글쓴이</td>
-                <td>22.10.15</td>
-                <td>3</td>
-                <td>
-                    <button type="button" class="btn btn-success smallSize" onclick="closePurchase(1)">마감
-                    </button>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {% for post in all_posts %}
+                    <tr style = "height:46px;">
+                        <th scope="row">{{ post.idx }}</th>
+                        <td class="title_td">
+                            <a href="/post/{{ post.idx }}">
+                                {{ post.title }}
+                            </a>
+                        </td>
+                        <td>{{ post.writer_name }}</td>
+                        <td class="text-muted reg-time">{{ post.reg_time }}</td>
+                        <td>{{ post.participants | count }}</td>
+                        <td>
+                            {% if post.status == "모집중" %}
+                                <button type="button" class="btn btn-success smallSize"
+                                        onclick="closePurchase({{ post.idx }})">
+                                    마감
+                                </button>
+                            {% endif %}
+                    </tr>
+                {% endfor %}
+                
+                </tbody>
+            </table>
 
+        </div>
     </div>
-
     <script>
+        $(document).ready(function () {
+            validate_user();
+        });
+
         function closePurchase(idx) {
             //쿠키를 가져와서 쿠키에 저장된 데이터를 보냄
             let myAccount = getCookie("account")
