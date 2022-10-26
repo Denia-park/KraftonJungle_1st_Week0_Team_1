@@ -131,6 +131,21 @@
             </tbody>
         </table>
     </div>
+
+    <script>
+        // select 요소 참조
+        const element = document.querySelector('#status');
+        // 변경 이벤트 발생 감시
+        element.addEventListener('change', handleChange);
+
+        function handleChange(event) {
+            // 값 가져오기
+            const value = element.value;
+
+            // 상태를 화면에 표시
+            location.href = `/?status=${value}`
+        }
+    </script>
 </body>
 
 </html>
