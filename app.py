@@ -22,9 +22,7 @@ def main():
 @app.route('/post')
 def post_form():
 
-    # 쿠키값 없으면 로그인 페이지로 돌린다.
-    print(request.cookies.get('user_name'))
-    if request.cookies.get('user_email') == None:
+    if request.cookies.get('account') == None:
         return redirect('login')
     return render_template('post_form.html', post=None)
 
@@ -32,12 +30,15 @@ def post_form():
 # POST 글 생성
 @app.route('/post', methods=['POST'])
 def create_post():
+    my_account = request.cookies.get("account")
+    account_email = my_account.split("/")[0]
+    account_name = my_account.split("/")[1]
     user_email = ''
     user_name = ''
     post_collection = db.posts
-    if request.cookies.get('user_email'):
-        user_email = request.cookies.get('user_email')
-        user_name = request.cookies.get('user_name')
+    if my_account:
+        account_email = my_account.split("/")[0]
+        account_name = my_account.split("/")[1]
     else:
         return jsonify({'result':'fail'})
 
@@ -51,11 +52,11 @@ def create_post():
         idx = 1
     else:
         idx = idx_list[0]['idx'] + 1
-    empty_list = ['wednesday5028@gmail.com']
+    empty_list = []
     doc = {
         'idx': idx,
-        'writer_name': user_name,
-        'writer_email': user_email,
+        'writer_name': account_name,
+        'writer_email': account_email,
         'title': input_title,
         'description': input_dtl,
         'participants': empty_list,
