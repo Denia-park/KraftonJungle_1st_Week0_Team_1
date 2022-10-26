@@ -67,6 +67,7 @@
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
                         alert(response["comment"]);
+                        location.reload();
                     } else {
                         alert(response["comment"]);
                     }
