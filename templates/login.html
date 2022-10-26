@@ -3,24 +3,48 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-            integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.min.js"
-            integrity="sha384-IDwe1+LCz02ROU9k972gdyvl+AESN10+x7tBKgc9I5HFtuNz0wWnPclzo6p9vxnk"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
             crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <style>
+    #login-wrap {
+        position: relative;
+    }
     .login {
-        margin: auto;
-        width: 40%;
+        max-width: 500px;
         text-align: center;
-        vertical-align: center;
+        padding: 100px 70px 150px 70px;
+        border: 1px solid #e5e5e5;
+        margin-top: 150px;
+        margin-left: auto;
+        margin-right: auto;
     }
 
-    .button-box {
-        margin-top: 10px;
+    #login-button {
+        background-color : #00C73C;
+        color : white;
+        width : 358px;
+        height : 50px;
+        margin: 50px 0;
+    }
+    #signup-button {
+        width : 100px;
+    }
+    #email {
+        margin-bottom : 25px;
+    }
+    #password {
+        margin-top : 25px;
+    }
+    .logo {
+        margin-bottom : 100px;
+    }
+    .logo-text {
+        display : inline;
     }
 </style>
 <script>
@@ -35,7 +59,7 @@
             success: function (response) {
                 if (response['result'] == 'success') {
                     alert('login success')
-                    window.location.href = '/';
+                    window.location.href = '/'
                 } else if (response['result'] == 'fail') {
                     alert('login failed')
                     window.location.reload()
@@ -45,18 +69,23 @@
     }
 </script>
 <body>
-    <div class="login">
-        <div class="form-floating mb-3">
-            <input type="email" class="form-control" id="email" placeholder="name@example.com">
-            <label for="email">Email address</label>
-        </div>
-        <div class="form-floating">
-            <input type="password" class="form-control" id="password" placeholder="Password">
-            <label for="password">Password</label>
-        </div>
-        <div class="button-box">
-            <button type="submit" class="btn btn-dark" onclick="loginFunction()">로그인</button>
-            <button type="button" class="btn btn-light" onclick="location.href='signup'">회원가입</button>
+    <div id="login-wrap">
+        <div class="login">
+            <div class="logo"><h1 class="logo-text">krafton </h1><h1 class="logo-text" style="color:#00C73C">09</h1></div>
+            <div class="form-floating mb-3">
+                <input type="email" class="form-control" id="email" placeholder="name@example.com">
+                <label for="email">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" placeholder="Password">
+                <label for="password">Password</label>
+            </div>
+            <div class="button-box">
+                <button type="submit" class="btn" id ="login-button" onclick="loginFunction()">로그인</button>
+            </div>
+            <div>
+                <text>아이디가 없으신가요?  </text><a href="signup" style="color:#00C73C; text-decoration: none;">회원 가입</a>
+            </div>
         </div>
     </div>
 </body>
