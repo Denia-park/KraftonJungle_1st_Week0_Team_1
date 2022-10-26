@@ -143,12 +143,7 @@ def mypage_page():
         account_email = my_account.split("/")[0]
         account_name = my_account.split("/")[1]
 
-    table_infos = [
-        {"idx": 1, "title": "Jinja제목1", "writer_name": "Jinja이름1", "status": "모집중", "reg_time": "22-10-14",
-         "participants": [["qwe@qwe.com", "qwe"]]},
-        {"idx": 2, "title": "Jinja제목2", "writer_name": "Jinja이름2", "status": "마감", "reg_time": "22-10-11",
-         "participants": [["qwe@qwe.com", "qwe"], ["qqq@qqq.com", "qqq"]]}
-    ]
+    table_infos = list(db.posts.find({"writer_email": account_email}, {'_id': False}).sort('idx', -1))
 
     return render_template('mypage.html', account_name=account_name, account_email=account_email,
                            all_posts=table_infos)
