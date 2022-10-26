@@ -30,7 +30,9 @@
         .post-buttons a {
             font-size: 14px;
         }
-
+        hr {
+            margin-top: 10px;
+        }
     </style>
     <title>Document</title>
 
@@ -38,7 +40,7 @@
         $(document).ready(function () {
             validate_user();
             validate_logged_user();
-            if ('{{post.status}}'=="마감") {
+            if ('{{post.status}}' == "마감") {
                 $('#close-button').text('마감됨');
                 $('#close-button').prop('disabled', true);
                 $('#close-button').show();
@@ -47,9 +49,9 @@
             }
         });
 
-        $( function () {
-            $( '[data-bs-toggle="popover"]' ).popover()
-        } );
+        $(function () {
+            $('[data-bs-toggle="popover"]').popover()
+        });
 
         function participate() {
             let decodedCookie = decodeURIComponent(document.cookie);
@@ -71,7 +73,7 @@
                 }
             })
         }
-        
+
 
         function validate_loginfo() {
             // 쿠키가 있으면 로그아웃, 마이페이지 나오게 한다.
@@ -89,14 +91,14 @@
             $.ajax({
                 type: "POST",
                 url: "/api/closePurchase",
-                data: {'idx_give': '{{post.idx}}' },
+                data: { 'idx_give': '{{post.idx}}' },
                 success: function (response) { // 성공하면
                     if (response["result"] == "success") {
                         alert(response["comment"]);
                         location.reload();
                     } else {
                         alert(response["comment"]);
-                        location.href='/';
+                        location.href = '/';
                     }
                 }
             })
@@ -137,21 +139,22 @@
             </div>
 
             <div class="writer-info row d-flex align-items-center">
+                <p class="mb-0">{{ post.writer_name }}</p>
 
                 <div class="post-info-area col">
-                    <p class="mb-0">{{ post.writer_name }}</p>
                     <small class="text-muted">2022-{{post.reg_time}}</small>
                     <small class="text-muted participants">참여</small>
                     <small class="text-muted participants">{{post.participants | count}}</small>
-                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-content="{%for idx in post.participants %}
+                    <span class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus"
+                        data-bs-content="{%for idx in post.participants %}
                      {{idx[1]}} 
                  {% endfor %}">
-                        <button class="btn btn-primary" type="button" disabled>참여자 명단</button>
-                      </span> 
+                        <button type="button" class="border ms-1" style="font-size: 12px; ">참여자 명단</button>
+                    </span>
                 </div>
                 <div id="post-button" class="post-buttons col d-flex flex-row-reverse">
-                    <a id="join-button" class="btn btn-secondary px-2 " onclick="participate()">참여</button>
-                    <a id="edit-button"class="btn btn-primary px-2 mx-1 own-post" href="/edit/{{ post.idx }}">수정</a>
+                    <a id="join-button" class="btn btn-secondary py-1 px-2 mx-1" onclick="participate()">참여</button>
+                    <a id="edit-button" class="btn btn-primary py-1 px-2 mx-1 own-post" href="/edit/{{ post.idx }}">수정</a>
                     <a class="btn btn-danger px-2 mx-1 own-post" href="/delete/{{ post.idx }}">삭제</a>
                     <button id="close-button" class="btn btn-success py-1 px-2 mx-1 own-post" onclick="close_purchase()">마감</button>
                 </div>
