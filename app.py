@@ -141,7 +141,7 @@ def mypage_page():
         {"idx": 2, "title": "Jinja제목2", "writer_name": "Jinja이름2", "status": "마감", "reg_time": "22-10-11",
          "participants": [["qwe@qwe.com", "qwe"], ["qqq@qqq.com", "qqq"]]}
     ]
-    
+
     return render_template('mypage.html', account_name=account_name, account_email=account_email,
                            all_posts=table_infos)
 
@@ -159,7 +159,7 @@ def signup_post():
         db.users.insert_one(user)
         return jsonify({'result': 'success', 'comment': "회원가입이 완료되었습니다."})
     else:
-        return jsonify({'result': 'error', 'comment': "이미 존재하는 회원 Email 입니다."})
+        return jsonify({'result': 'fail', 'comment': "이미 존재하는 회원 Email 입니다."})
 
 
 @app.route('/api/addData', methods=['GET'])
@@ -189,7 +189,7 @@ def closepurchase_post():
 
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
-        return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
+        return jsonify({'result': 'fail', 'comment': "해당하는 idx post가 없습니다."})
 
     if my_account is None:
         account_email = "fail.com"
@@ -199,7 +199,7 @@ def closepurchase_post():
         account_name = my_account.split("/")[1]
 
     if finded_post["writer_email"] != account_email or finded_post["writer_name"] != account_name:
-        return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
+        return jsonify({'result': 'fail', 'comment': "잘못된 사용자의 요청입니다."})
 
     # 3. mongoDB에 데이터를 넣기
     db.posts.update_one({'idx': idx_receive}, {'$set': {'status': "마감"}})
@@ -214,17 +214,27 @@ def joinpurchase_post():
     idx_receive = int(request.form['idx_give'])
 
     if my_account is None:
-        return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
+        return jsonify({'result': 'fail', 'comment': "잘못된 사용자의 요청입니다."})
 
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
-        return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
-    print(idx_receive)
+        return jsonify({'result': 'fail', 'comment': "해당하는 idx post가 없습니다."})
     my_list = finded_post["participants"]
 
     account_email = my_account.split("/")[0]
     account_name = my_account.split("/")[1]
     account_list = [account_email, account_name]
+
+    duplication_flag = False
+
+    for user_data in my_list:
+        if user_data[0] == account_email:
+            duplication_flag = True
+            break
+
+    if duplication_flag:
+        return jsonify({'result': 'fail', 'comment': "이미 참여하셨습니다."})
+
     my_list.append(account_list)
 
     # 3. mongoDB에 데이터를 넣기
