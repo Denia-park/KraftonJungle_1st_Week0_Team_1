@@ -1,0 +1,22 @@
+.navbar {
+  background-color: #00c73c;
+}
+.navbar a {
+  text-decoration:none;
+  color: white;
+}
+.navbar a:hover { 
+  text-decoration:none;
+  color: white;
+}
+
+@media (min-width: 768px) { 
+  .container {
+     width: 750px; 
+    }
+}
+@media (min-width: 992px) { 
+  .container { width: 940px; 
+  }
+}
+
