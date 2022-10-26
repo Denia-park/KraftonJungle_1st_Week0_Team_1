@@ -175,16 +175,16 @@ def add_data():
 
 @app.route('/api/closePurchase', methods=['POST'])
 def closepurchase_post():
-    # request.cookies.get("")
-    account_receive = request.form['account_give']
+    # my_account = request.form['account_give']
+    my_account = request.cookies.get("account")
     idx_receive = int(request.form['idx_give'])
 
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
     if finded_post is None:
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
 
-    account_email = account_receive.split("/")[0]
-    account_name = account_receive.split("/")[1]
+    account_email = my_account.split("/")[0]
+    account_name = my_account.split("/")[1]
 
     if finded_post["writer_email"] != account_email or finded_post["writer_name"] != account_name:
         return jsonify({'result': 'error', 'comment': "잘못된 사용자의 요청입니다."})
@@ -197,7 +197,8 @@ def closepurchase_post():
 
 @app.route('/api/joinPurchase', methods=['POST'])
 def joinpurchase_post():
-    account_receive = request.form['account_give']
+    # my_account = request.form['account_give']
+    my_account = request.cookies.get("account")
     idx_receive = int(request.form['idx_give'])
 
     finded_post = db.posts.find_one({'idx': idx_receive}, {'_id': False})
@@ -205,8 +206,8 @@ def joinpurchase_post():
         return jsonify({'result': 'error', 'comment': "해당하는 idx post가 없습니다."})
 
     my_list = finded_post["participants"]
-    account_email = account_receive.split("/")[0]
-    account_name = account_receive.split("/")[1]
+    account_email = my_account.split("/")[0]
+    account_name = my_account.split("/")[1]
     account_list = [account_email, account_name]
     my_list.append(account_list)
 
