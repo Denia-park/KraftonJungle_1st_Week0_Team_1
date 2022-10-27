@@ -124,7 +124,8 @@ def login():
         if signin_user:
             if (signin_user['pw'] == pw_receive):
                 resp = make_response({'result': 'success'})
-                resp.set_cookie('account', account)
+                #resp.set_cookie('account', value= account, domain='king-dev.shop')
+                resp.set_cookie('account',account)
                 return resp
             else:
                 return jsonify({'result': 'fail'})
